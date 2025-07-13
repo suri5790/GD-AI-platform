@@ -1,0 +1,23 @@
+# Ignore environment variable files
+.env
+.env.local
+
+# Ignore specific configuration files that contain sensitive info
+config.local.js
+secrets.txt
+
+# Ignore editor/IDE specific files
+.vscode/
+.idea/
+*.iml
+
+# Ignore compiled output
+/build/
+/dist/
+/out/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore logs
+*.log
