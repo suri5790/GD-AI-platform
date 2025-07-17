@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios"; // ✅ use centralized axios instance
 
 function CreateSession() {
   const [form, setForm] = useState({
@@ -17,7 +17,8 @@ function CreateSession() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "aiCount" || name === "humanCount" ? parseInt(value) : value,
+      [name]:
+        name === "aiCount" || name === "humanCount" ? parseInt(value) : value,
     }));
   };
 
@@ -27,15 +28,15 @@ function CreateSession() {
     setSuccess("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/gd/create", form, {
+      const res = await api.post("/gd/create", form, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-    navigate("/dashboard", {
-  state: { message: "Session created successfully!" },
-});
 
+      navigate("/dashboard", {
+        state: { message: "Session created successfully!" },
+      });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     }
@@ -43,8 +44,13 @@ function CreateSession() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-      <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-lg">
-        <h2 className="text-3xl font-bold mb-6 text-center">Schedule GD / Interview</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-lg"
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          Schedule GD / Interview
+        </h2>
 
         <input
           name="topic"
@@ -83,7 +89,9 @@ function CreateSession() {
           </div>
 
           <div className="w-1/2">
-            <label className="block mb-1 text-purple-300">Real Participants</label>
+            <label className="block mb-1 text-purple-300">
+              Real Participants
+            </label>
             <select
               name="humanCount"
               value={form.humanCount}

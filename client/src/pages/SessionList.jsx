@@ -11,7 +11,7 @@ function SessionList() {
     const fetchSessions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/session/mine", {
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/session/mine`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSessions(res.data);

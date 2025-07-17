@@ -27,15 +27,15 @@ function Register() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/register`, {
         name: form.name,
         email: form.email,
         password: form.password,
       });
-     navigate("/", {
-  state: { message: "Registered successfully! Please login." },
-});
 
+      navigate("/", {
+        state: { message: "Registered successfully! Please login." },
+      });
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     }

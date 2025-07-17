@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
+// ✅ Use environment variable
+const BASE_URL = import.meta.env.VITE_SERVER_URL;
+
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +29,7 @@ function Login() {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", form);
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, form);
       localStorage.setItem("token", res.data.token);
 
       const redirectTo = location.state?.redirectTo || "/dashboard";

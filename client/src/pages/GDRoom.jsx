@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
 
-export const socket = io("http://localhost:5000", {
+export const socket = io(import.meta.env.VITE_SERVER_URL, {
   transports: ["websocket", "polling"],
 });
 window.socket = socket;
@@ -31,13 +31,17 @@ function GDRoom() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const userRes = await axios.get("http://localhost:5000/api/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+
+        const userRes = await axios.get(
+          `${import.meta.env.VITE_SERVER_URL}/api/auth/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setCurrentUserId(userRes.data._id);
 
         const res = await axios.post(
-          `http://localhost:5000/api/session/${sessionId}/join`,
+          `${import.meta.env.VITE_SERVER_URL}/api/session/${sessionId}/join`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -185,7 +189,7 @@ function GDRoom() {
     try {
       setLoadingAction(true);
       await axios.post(
-        `http://localhost:5000/api/session/${sessionId}/start`,
+        `${import.meta.env.VITE_SERVER_URL}/api/session/${sessionId}/start`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -197,28 +201,23 @@ function GDRoom() {
     }
   };
 
-const handleEndGD = async () => {
-  try {
-    setLoadingAction(true);
+  const handleEndGD = async () => {
+    try {
+      setLoadingAction(true);
+      const fakeFeedback = session.participants.map((user, i) => ({
+        username: user.username || `User ${i + 1}`,
+        feedback: `✅ Participation: Good\n✅ Communication: Clear\n✅ Points Made: Relevant\n📝 Suggestion: Try to involve others more.`,
+      }));
 
-    // Skip API calls — we're faking everything
-    const fakeFeedback = session.participants.map((user, i) => ({
-      username: user.username || `User ${i + 1}`,
-      feedback: `✅ Participation: Good\n✅ Communication: Clear\n✅ Points Made: Relevant\n📝 Suggestion: Try to involve others more.`,
-    }));
-
-    setFeedbackData(fakeFeedback);
-    setSession((prev) => ({ ...prev, isEnded: true }));
-  } catch (err) {
-    console.error("❌ GD end or feedback error: ", err);
-    alert("GD End failed. Check console.");
-  } finally {
-    setLoadingAction(false);
-  }
-};
-
-
-
+      setFeedbackData(fakeFeedback);
+      setSession((prev) => ({ ...prev, isEnded: true }));
+    } catch (err) {
+      console.error("❌ GD end or feedback error: ", err);
+      alert("GD End failed. Check console.");
+    } finally {
+      setLoadingAction(false);
+    }
+  };
 
   const toggleMute = () => {
     if (micStream) {
