@@ -28,20 +28,22 @@ function GDRoom() {
   const recognitionRef = useRef(null);
 
   // ✅ Function to invite bot to the room
-  const inviteBotToRoom = async () => {
-    const alreadyInvited = localStorage.getItem(`bot-invited-${sessionId}`);
-    if (alreadyInvited) return;
+// ✅ Function to invite bot to the room
+const inviteBotToRoom = async () => {
+  const alreadyInvited = localStorage.getItem(`bot-invited-${sessionId}`);
+  if (alreadyInvited) return;
 
-    try {
-      await axios.post("https://your-bot-server-url.com/invite-bot", {
-        roomId: sessionId,
-      });
-      console.log("✅ AI bot invited to room:", sessionId);
-      localStorage.setItem(`bot-invited-${sessionId}`, "true");
-    } catch (err) {
-      console.error("❌ Failed to invite AI bot:", err.message);
-    }
-  };
+  try {
+    await axios.post("https://botclient-1.onrender.com/invite-bot", {
+      roomId: sessionId,
+    });
+    console.log("✅ AI bot invited to room:", sessionId);
+    localStorage.setItem(`bot-invited-${sessionId}`, "true");
+  } catch (err) {
+    console.error("❌ Failed to invite AI bot:", err.message);
+  }
+};
+
 
   useEffect(() => {
     const fetchData = async () => {
