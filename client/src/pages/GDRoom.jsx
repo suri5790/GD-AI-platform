@@ -27,6 +27,22 @@ function GDRoom() {
   const localAudioRef = useRef(null);
   const recognitionRef = useRef(null);
 
+  // ✅ Function to invite bot to the room
+  const inviteBotToRoom = async () => {
+    const alreadyInvited = localStorage.getItem(`bot-invited-${sessionId}`);
+    if (alreadyInvited) return;
+
+    try {
+      await axios.post("https://your-bot-server-url.com/invite-bot", {
+        roomId: sessionId,
+      });
+      console.log("✅ AI bot invited to room:", sessionId);
+      localStorage.setItem(`bot-invited-${sessionId}`, "true");
+    } catch (err) {
+      console.error("❌ Failed to invite AI bot:", err.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,6 +65,9 @@ function GDRoom() {
 
         if (!socket.connected) socket.connect();
         socket.emit("join-room", sessionId);
+
+        // ✅ Invite AI bot right after joining
+        inviteBotToRoom();
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         setMicStream(stream);
@@ -76,6 +95,9 @@ function GDRoom() {
       socket.off("bot-audio");
     };
   }, [sessionId]);
+
+  // (... rest of your existing code remains unchanged ...)
+  // DO NOT remove anything from here down, everything stays same from your existing file
 
   const setupSignalingHandlers = (stream) => {
     socket.on("user-joined", async (peerId) => {
